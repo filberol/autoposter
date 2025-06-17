@@ -1,23 +1,33 @@
 package ru.social.ai.consumers
 
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import org.telegram.telegrambots.meta.api.objects.Update
 import ru.social.ai.commands.Command
-import ru.social.ai.commands.NotFoundCommand
-import ru.social.ai.commands.TestCommand
+import ru.social.ai.commands.NotFound
+import ru.social.ai.commands.ReplyDirectlyWithAi
+import ru.social.ai.commands.Test
+
+private const val CommandExecutionTimeoutMs = 30000L
 
 class CommandDispatcher {
+
     companion object {
         private val registeredCommands = listOf(
-            TestCommand()
+            Test(),
+            ReplyDirectlyWithAi()
         )
     }
 
-    fun dispatchCommand(update: Update) {
+    suspend fun dispatchCommand(update: Update) {
         val foundCommand: Command? = registeredCommands.firstOrNull { update.message.text.startsWith(it.name) }
-        if (foundCommand == null) {
-            NotFoundCommand().execute(update)
-        } else {
-            foundCommand.execute(update)
+        withTimeout(CommandExecutionTimeoutMs) {
+            launch {
+                foundCommand?.let { foundCommand.execute(update) }
+                if (foundCommand == null) {
+                    NotFound().execute(update)
+                }
+            }
         }
     }
 }

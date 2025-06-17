@@ -5,13 +5,13 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 
 
-class TestCommand: BasicCommand() {
+class Test: Basic() {
     override val name = "/test"
-    override fun execute(update: Update) {
+    override suspend fun execute(update: Update) {
         if (update.hasMessage() && update.message.hasText()) {
             val sendMessage = SendMessage(update.message.chatId.toString(), update.message.text)
             try {
-                client.execute(sendMessage)
+                telegramClient.execute(sendMessage)
             } catch (e: TelegramApiException) {
                 e.printStackTrace()
             }

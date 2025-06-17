@@ -4,10 +4,11 @@ import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient
 import org.telegram.telegrambots.meta.generics.TelegramClient
 import ru.social.ai.util.TokenProvider
 
-class TelegramBotClient {
+class TelegramBot {
     companion object {
-        private val botToken = TokenProvider.getToken()
-        private val telegramClient: TelegramClient = OkHttpTelegramClient(botToken)
+        private val token = TokenProvider.getTelegramToken()
+        private val telegramClient: TelegramClient = OkHttpTelegramClient(token)
+
         fun getClient() = telegramClient
     }
 }
