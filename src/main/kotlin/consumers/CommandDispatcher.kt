@@ -6,32 +6,30 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 import ru.social.ai.clents.TelegramBot
-import ru.social.ai.commands.Command
-import ru.social.ai.commands.NotFound
-import ru.social.ai.commands.ReplyDirectlyWithAi
-import ru.social.ai.commands.Test
+import ru.social.ai.commands.*
 import ru.social.ai.exceptions.UserReasonableException
+import ru.social.ai.util.UpdateExtractor
 import java.util.concurrent.ExecutionException
 
 private const val CommandExecutionTimeoutMs = 30000L
 
 class CommandDispatcher {
 
-    val responseClient = TelegramBot.getClient()
+    private val responseClient = TelegramBot.getClient()
 
     companion object {
         private val registeredCommands = listOf(
             Test(),
             ReplyDirectlyWithAi(),
-
+            RephraseRepost()
         )
     }
 
     suspend fun dispatchCommand(update: Update) {
         val foundCommand: Command? = registeredCommands
             .firstOrNull {
-                update.message.hasText()
-                        && update.message.text.startsWith(it.triggerName())
+                UpdateExtractor.isTextPresent(update)
+                        && UpdateExtractor.extractText(update).startsWith(it.triggerName())
                         || it.customTrigger(update)
             }
         withTimeout(CommandExecutionTimeoutMs) {

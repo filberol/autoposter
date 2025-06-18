@@ -21,8 +21,8 @@ class ReplyDirectlyWithAi: Basic() {
         val sendMessage = SendMessagePreBuilder
             .chatId(update.message.chatId)
             .text(withContext(Dispatchers.IO) {
-                response.get()
-            }.choices.first().message.content)
+                response.get().choices.first().message.content
+            })
             .build()
         telegramClient.execute(sendMessage)
     }
