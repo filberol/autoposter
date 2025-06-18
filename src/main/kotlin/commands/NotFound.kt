@@ -5,7 +5,6 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 
 class NotFound: Basic() {
-    override val name = "" // Override to never register such
     override suspend fun execute(update: Update) {
         val sendMessage = SendMessage(update.message.chatId.toString(), "Команда не найдена")
         try {

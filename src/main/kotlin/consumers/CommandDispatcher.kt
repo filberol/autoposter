@@ -2,30 +2,60 @@ package ru.social.ai.consumers
 
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException
+import ru.social.ai.clents.TelegramBot
 import ru.social.ai.commands.Command
 import ru.social.ai.commands.NotFound
 import ru.social.ai.commands.ReplyDirectlyWithAi
 import ru.social.ai.commands.Test
+import ru.social.ai.exceptions.UserReasonableException
+import java.util.concurrent.ExecutionException
 
 private const val CommandExecutionTimeoutMs = 30000L
 
 class CommandDispatcher {
 
+    val responseClient = TelegramBot.getClient()
+
     companion object {
         private val registeredCommands = listOf(
             Test(),
-            ReplyDirectlyWithAi()
+            ReplyDirectlyWithAi(),
+
         )
     }
 
     suspend fun dispatchCommand(update: Update) {
-        val foundCommand: Command? = registeredCommands.firstOrNull { update.message.text.startsWith(it.name) }
+        val foundCommand: Command? = registeredCommands
+            .firstOrNull {
+                update.message.hasText()
+                        && update.message.text.startsWith(it.triggerName())
+                        || it.customTrigger(update)
+            }
         withTimeout(CommandExecutionTimeoutMs) {
             launch {
-                foundCommand?.let { foundCommand.execute(update) }
-                if (foundCommand == null) {
-                    NotFound().execute(update)
+                try {
+                    foundCommand?.let { foundCommand.execute(update) }
+                    if (foundCommand == null) {
+                        NotFound().execute(update)
+                    }
+                } catch (e: TelegramApiException) {
+                    e.printStackTrace()
+                } catch (e: ExecutionException) {
+                    e.printStackTrace()
+                    responseClient.execute(
+                        SendMessage(
+                            update.message.chatId.toString(), "Непредвиденная ошибка"
+                        )
+                    )
+                } catch (e: UserReasonableException) {
+                    responseClient.execute(
+                        SendMessage(
+                            update.message.chatId.toString(), e.message.toString()
+                        )
+                    )
                 }
             }
         }

@@ -6,7 +6,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 
 
 class Test: Basic() {
-    override val name = "/test"
+    override fun triggerName() = "/test"
     override suspend fun execute(update: Update) {
         if (update.hasMessage() && update.message.hasText()) {
             val sendMessage = SendMessage(update.message.chatId.toString(), update.message.text)
