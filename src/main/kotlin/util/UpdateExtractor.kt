@@ -22,6 +22,10 @@ class UpdateExtractor {
             return text.split(" ", limit = 2).getOrElse(1) { throw TextNotProvided() }
         }
 
+        fun extractTextIfPresent(update: Update): String? {
+            return try { extractText(update) } catch (e: TextNotProvided) { null }
+        }
+
         fun isTextPresent(update: Update): Boolean {
             return try {
                 extractText(update)

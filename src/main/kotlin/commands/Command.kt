@@ -17,4 +17,6 @@ interface Command {
      * Decides if the command should be custom executed by predicate
      */
     fun customTrigger(update: Update): Boolean = false
+
+
 }

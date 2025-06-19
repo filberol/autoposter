@@ -21,17 +21,30 @@ class CommandDispatcher {
         private val registeredCommands = listOf(
             Test(),
             ReplyDirectlyWithAi(),
+
+        )
+
+        private val registeredBatchCommands = listOf(
             RephraseRepost()
         )
+    }
+
+     fun dispatchCommands(updates: List<Update>) {
+
+                updates.forEach { update -> println(update.message) }
+         println("done")
+
     }
 
     suspend fun dispatchCommand(update: Update) {
         val foundCommand: Command? = registeredCommands
             .firstOrNull {
-                UpdateExtractor.isTextPresent(update)
+                it.customTrigger(update)
+                        || UpdateExtractor.isTextPresent(update)
                         && UpdateExtractor.extractText(update).startsWith(it.triggerName())
-                        || it.customTrigger(update)
+
             }
+        println("Executing command $foundCommand")
         withTimeout(CommandExecutionTimeoutMs) {
             launch {
                 try {
