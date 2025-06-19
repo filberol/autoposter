@@ -2,6 +2,12 @@ package ru.social.ai.util
 
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.api.objects.media.InputMedia.InputMediaBuilder
+import org.telegram.telegrambots.meta.api.objects.media.InputMediaAnimation
+import org.telegram.telegrambots.meta.api.objects.media.InputMediaAudio
+import org.telegram.telegrambots.meta.api.objects.media.InputMediaDocument
+import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto
+import org.telegram.telegrambots.meta.api.objects.media.InputMediaVideo
 import ru.social.ai.exceptions.TextNotProvided
 
 class UpdateExtractor {
@@ -46,29 +52,28 @@ class UpdateExtractor {
             } ?: false
         }
 
-        fun extractAttachments(update: Update): Pair<String?, List<InputFile>> {
-            val message = update.message ?: return null to emptyList()
-            val attachments = mutableListOf<InputFile>()
-            val caption: String? = message.caption ?: message.text
+        fun extractAttachmentInputFile(update: Update): InputFile? {
+            val message = update.message
+            return when {
+                message.hasPhoto() -> InputFile(message.photo.last().fileId)
+                message.hasVideo() -> InputFile(message.video.fileId)
+                message.hasDocument() -> InputFile(message.document.fileId)
+                message.hasAnimation() -> InputFile(message.animation.fileId)
+                message.hasAudio() -> InputFile(message.audio.fileId)
+                else -> null
+            }
+        }
 
-            message.photo?.forEach { attachments.add(InputFile(it.fileId)) }
-            message.video?.fileId?.let {
-                attachments.add(InputFile(it))
+        fun extractAttachmentMediaBuilder(update: Update): InputMediaBuilder<*,*>? {
+            val message = update.message
+            return when {
+                message.hasPhoto() -> InputMediaPhoto.builder().media(message.photo.last().fileId)
+                message.hasVideo() -> InputMediaVideo.builder().media(message.video.fileId)
+                message.hasDocument() -> InputMediaDocument.builder().media(message.document.fileId)
+                message.hasAnimation() -> InputMediaAnimation.builder().media(message.animation.fileId)
+                message.hasAudio() -> InputMediaAudio.builder().media(message.audio.fileId)
+                else -> null
             }
-            message.document?.fileId?.let {
-                attachments.add(InputFile(it))
-            }
-            message.audio?.fileId?.let {
-                attachments.add(InputFile(it))
-            }
-            message.voice?.fileId?.let {
-                attachments.add(InputFile(it))
-            }
-            message.sticker?.fileId?.let {
-                attachments.add(InputFile(it))
-            }
-
-            return caption to attachments
         }
     }
 }

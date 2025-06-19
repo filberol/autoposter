@@ -1,7 +1,5 @@
 package ru.social.ai.consumers
 
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeout
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
@@ -11,7 +9,6 @@ import ru.social.ai.exceptions.UserReasonableException
 import ru.social.ai.util.UpdateExtractor
 import java.util.concurrent.ExecutionException
 
-private const val CommandExecutionTimeoutMs = 30000L
 
 class CommandDispatcher {
 
@@ -21,54 +18,45 @@ class CommandDispatcher {
         private val registeredCommands = listOf(
             Test(),
             ReplyDirectlyWithAi(),
-
-        )
-
-        private val registeredBatchCommands = listOf(
             RephraseRepost()
         )
     }
 
-     fun dispatchCommands(updates: List<Update>) {
+    suspend fun dispatchCommands(updates: List<Update>) {
+        val foundCommand = if (updates.size == 1) {
+            registeredCommands
+                .firstOrNull {
+                    it.customTrigger(updates.first())
+                            || UpdateExtractor.isTextPresent(updates.first())
+                            && UpdateExtractor.extractText(updates.first()).startsWith(it.triggerName())
 
-                updates.forEach { update -> println(update.message) }
-         println("done")
-
-    }
-
-    suspend fun dispatchCommand(update: Update) {
-        val foundCommand: Command? = registeredCommands
-            .firstOrNull {
-                it.customTrigger(update)
-                        || UpdateExtractor.isTextPresent(update)
-                        && UpdateExtractor.extractText(update).startsWith(it.triggerName())
-
-            }
-        println("Executing command $foundCommand")
-        withTimeout(CommandExecutionTimeoutMs) {
-            launch {
-                try {
-                    foundCommand?.let { foundCommand.execute(update) }
-                    if (foundCommand == null) {
-                        NotFound().execute(update)
-                    }
-                } catch (e: TelegramApiException) {
-                    e.printStackTrace()
-                } catch (e: ExecutionException) {
-                    e.printStackTrace()
-                    responseClient.execute(
-                        SendMessage(
-                            update.message.chatId.toString(), "Непредвиденная ошибка"
-                        )
-                    )
-                } catch (e: UserReasonableException) {
-                    responseClient.execute(
-                        SendMessage(
-                            update.message.chatId.toString(), e.message.toString()
-                        )
-                    )
                 }
+        } else {
+            registeredCommands.firstOrNull {
+                it.customTrigger(updates)
             }
+        }
+        println("Executing command $foundCommand")
+        try {
+            foundCommand?.let { foundCommand.sizeOverrideExecute(updates) }
+            if (foundCommand == null) {
+                NotFound().sizeOverrideExecute(updates)
+            }
+        } catch (e: TelegramApiException) {
+            e.printStackTrace()
+        } catch (e: ExecutionException) {
+            e.printStackTrace()
+            responseClient.execute(
+                SendMessage(
+                    updates.first().message.chatId.toString(), "Непредвиденная ошибка"
+                )
+            )
+        } catch (e: UserReasonableException) {
+            responseClient.execute(
+                SendMessage(
+                    updates.first().message.chatId.toString(), e.message.toString()
+                )
+            )
         }
     }
 }
