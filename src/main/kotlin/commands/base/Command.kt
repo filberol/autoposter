@@ -1,4 +1,4 @@
-package ru.social.ai.commands
+package ru.social.ai.commands.base
 
 import org.telegram.telegrambots.meta.api.objects.Update
 

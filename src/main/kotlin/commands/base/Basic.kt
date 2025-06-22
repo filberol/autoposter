@@ -1,4 +1,4 @@
-package ru.social.ai.commands
+package ru.social.ai.commands.base
 
 import ru.social.ai.clents.TelegramBot
 import ru.social.ai.clients.ChatBot
