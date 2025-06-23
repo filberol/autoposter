@@ -4,6 +4,7 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import ru.social.ai.prebuilders.SendMessagePreBuilder
 
 abstract class Stage : Basic() {
+    override val triggerName = "command_not_found"
     abstract val commandPhrase: String
 
     fun sendCommandPhrase(update: Update) {

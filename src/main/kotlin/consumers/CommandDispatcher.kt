@@ -4,40 +4,46 @@ import org.slf4j.LoggerFactory
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
-import ru.social.ai.clents.TelegramBot
+import ru.social.ai.clients.TelegramBot
 import ru.social.ai.commands.*
+import ru.social.ai.commands.base.MultiStage
 import ru.social.ai.commands.common.Debug
 import ru.social.ai.commands.common.Start
 import ru.social.ai.commands.common.Test
-import ru.social.ai.commands.setup.Setup
+import ru.social.ai.commands.setup.SetupI
+import ru.social.ai.commands.setup.SetupII
+import ru.social.ai.db.entities.UserCommandStageEntity
 import ru.social.ai.exceptions.UserReasonableException
-import ru.social.ai.util.TextExtractor
+import ru.social.ai.util.TextExtractor.extractTextIfPresent
 import java.util.concurrent.ExecutionException
 
 
 class CommandDispatcher {
     private val responseClient = TelegramBot.getClient()
-    private val logger = LoggerFactory.getLogger(CommandDispatcher::class.java)
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     companion object {
         private val registeredCommands = listOf(
-            Test(),
-            ReplyDirectlyWithAi(),
-            RephraseRepost(),
-            Start(),
-            Debug(),
-            Setup()
+            Test("/test"),
+            ReplyDirectlyWithAi("/reply"),
+            RephraseRepost("/rephrase"),
+            Start("/start"),
+            Debug("/debug"),
+            object : MultiStage("/setup") {
+                override val stages = listOf(SetupI(), SetupII())
+            }
         )
     }
 
     suspend fun dispatchCommands(updates: List<Update>) {
+        val commandInProcess = UserCommandStageEntity.findById(updates.first().message.from.id)
+        val command = commandInProcess?.toCommandStage()?.commandName ?: extractTextIfPresent(updates.first()) ?: ""
+
         val foundCommand = if (updates.size == 1) {
             registeredCommands
                 .firstOrNull {
                     it.customTrigger(updates.first())
-                            || TextExtractor.isTextPresent(updates.first())
-                            && TextExtractor.extractText(updates.first()).startsWith(it.triggerName())
-
+                            || command.startsWith(it.triggerName)
                 }
         } else {
             registeredCommands.firstOrNull {

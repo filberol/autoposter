@@ -2,7 +2,7 @@ package ru.social.ai.commands
 
 import org.telegram.telegrambots.meta.api.methods.send.*
 import org.telegram.telegrambots.meta.api.objects.Update
-import ru.social.ai.ai.prompts.SimpleDialog
+import ru.social.ai.ai.SimpleDialog
 import ru.social.ai.commands.base.Basic
 import ru.social.ai.prebuilders.SendMessagePreBuilder
 import ru.social.ai.util.MediaUtils
@@ -11,8 +11,9 @@ import ru.social.ai.util.TextExtractor.extractAttachmentInputFile
 import ru.social.ai.util.TextExtractor.extractAttachmentMediaBuilder
 import ru.social.ai.util.TextExtractor.extractTextIfPresent
 
-class RephraseRepost : Basic() {
-    override fun triggerName() = "/rephrase"
+class RephraseRepost(
+    override val triggerName: String,
+) : Basic() {
     override fun customTrigger(updates: List<Update>) = isReposted(updates.first())
     override fun customTrigger(update: Update) = isReposted(update)
 

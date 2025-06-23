@@ -4,8 +4,9 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import ru.social.ai.commands.base.Basic
 
-class Start: Basic() {
-    override fun triggerName() = "/start"
+class Start(
+    override val triggerName: String
+): Basic() {
 
     override suspend fun execute(update: Update) {
         telegramClient.execute(SendMessage.builder()

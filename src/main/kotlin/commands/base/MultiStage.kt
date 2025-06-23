@@ -1,31 +1,39 @@
 package ru.social.ai.commands.base
 
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.replace
 import org.telegram.telegrambots.meta.api.objects.Update
-import ru.social.ai.entities.UserCommandStage
-import ru.social.ai.entities.UserCommandStageEntity
-import ru.social.ai.entities.UserCommandStages
+import ru.social.ai.db.entities.UserCommandStage
+import ru.social.ai.db.entities.UserCommandStageEntity
+import ru.social.ai.db.entities.UserCommandStages
 import ru.social.ai.util.MetaExtractor.getUserId
 
-abstract class MultiStage : Basic() {
+abstract class MultiStage(
+    override val triggerName: String
+) : Basic() {
     abstract val stages: List<Stage>
 
     override suspend fun execute(update: Update) {
         val userId = getUserId(update)
         val retrievedStage =
             UserCommandStageEntity
-                .find { (UserCommandStages.id eq userId) and (UserCommandStages.commandName eq triggerName()) }
-                .firstOrNull()?.toCommandStage() ?: UserCommandStage(userId, triggerName(), 0)
+                .find { (UserCommandStages.id eq userId) and (UserCommandStages.commandName eq triggerName) }
+                .firstOrNull()?.toCommandStage() ?: UserCommandStage(userId, triggerName, 0)
         val currentStage = stages[retrievedStage.commandStage]
         currentStage.apply {
             sendCommandPhrase(update)
             execute(update)
         }
-        UserCommandStages.replace {
-            it[id] = retrievedStage.userId
-            it[commandName] = retrievedStage.commandName
-            it[commandStage] = retrievedStage.commandStage + 1
+        if (retrievedStage.commandStage + 1 == stages.size) { // Last one
+            UserCommandStages.deleteWhere { (id eq userId) and (commandName eq triggerName) }
+        } else {
+            UserCommandStages.replace {
+                it[id] = retrievedStage.userId
+                it[commandName] = retrievedStage.commandName
+                it[commandStage] = retrievedStage.commandStage + 1
+            }
         }
     }
 }

@@ -9,9 +9,9 @@ import ru.social.ai.prebuilders.FreeModelPreBuilder
 import ru.social.ai.prebuilders.SendMessagePreBuilder
 import ru.social.ai.util.TextExtractor
 
-class ReplyDirectlyWithAi: Basic() {
-    override fun triggerName() = "/reply"
-
+class ReplyDirectlyWithAi(
+    override val triggerName: String,
+): Basic() {
     override suspend fun execute(update: Update) {
         val text = TextExtractor.extractTextWithoutCommand(update)
         val response = chatClient.chatCompletions().create(

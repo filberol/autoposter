@@ -34,6 +34,10 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.9")
     implementation("ch.qos.logback:logback-classic:1.5.13")
 
+    // Reflection
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.0")
+    implementation("org.reflections:reflections:0.10.2")
+
     // Tests
     testImplementation(kotlin("test"))
 }

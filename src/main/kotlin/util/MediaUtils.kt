@@ -3,7 +3,7 @@ package ru.social.ai.util
 import org.telegram.telegrambots.meta.api.methods.send.*
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.api.objects.media.InputMedia
-import ru.social.ai.clents.TelegramBot
+import ru.social.ai.clients.TelegramBot
 
 object MediaUtils {
     private val telegramClient = TelegramBot.getClient()
