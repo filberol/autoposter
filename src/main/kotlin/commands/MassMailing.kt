@@ -1,0 +1,23 @@
+package ru.social.ai.commands
+
+import org.telegram.telegrambots.meta.api.objects.Update
+import ru.social.ai.commands.base.Basic
+import ru.social.ai.db.entities.ChannelConfigurationEntity
+import ru.social.ai.prebuilders.SendMessagePreBuilder
+import ru.social.ai.util.TextExtractor.extractTextWithoutCommand
+
+class MassMailing(
+    override val triggerName: String
+) : Basic() {
+    override suspend fun execute(update: Update) {
+        val channels = ChannelConfigurationEntity.all()
+            .map { it.toChannelConfiguration().linkId }
+            .toSet()
+        val text = extractTextWithoutCommand(update)
+
+        channels.forEach { channel ->
+            SendMessagePreBuilder.chatId(channel).text(text).build()
+                .also { telegramClient.execute(it) }
+        }
+    }
+}

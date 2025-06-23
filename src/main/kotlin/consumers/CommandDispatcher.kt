@@ -7,39 +7,46 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 import ru.social.ai.clients.TelegramBot
 import ru.social.ai.commands.*
 import ru.social.ai.commands.base.MultiStage
+import ru.social.ai.commands.common.Cancel
 import ru.social.ai.commands.common.Debug
 import ru.social.ai.commands.common.Start
 import ru.social.ai.commands.common.Test
 import ru.social.ai.commands.setup.SetupI
 import ru.social.ai.commands.setup.SetupII
+import ru.social.ai.commands.setup.SetupIII
 import ru.social.ai.db.entities.UserCommandStageEntity
 import ru.social.ai.exceptions.UserReasonableException
 import ru.social.ai.util.TextExtractor.extractTextIfPresent
 import java.util.concurrent.ExecutionException
-
 
 class CommandDispatcher {
     private val responseClient = TelegramBot.getClient()
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     companion object {
+        private val cancel = Cancel("/cancel")
+
         private val registeredCommands = listOf(
             Test("/test"),
             ReplyDirectlyWithAi("/reply"),
             RephraseRepost("/rephrase"),
             Start("/start"),
             Debug("/debug"),
+            MassMailing("/mass"),
             object : MultiStage("/setup") {
-                override val stages = listOf(SetupI(), SetupII())
+                override val stages = listOf(SetupI(), SetupII(), SetupIII())
             }
         )
     }
 
     suspend fun dispatchCommands(updates: List<Update>) {
         val commandInProcess = UserCommandStageEntity.findById(updates.first().message.from.id)
-        val command = commandInProcess?.toCommandStage()?.commandName ?: extractTextIfPresent(updates.first()) ?: ""
+        val text = extractTextIfPresent(updates.first())
+        val command = commandInProcess?.toCommandStage()?.commandName ?: text ?: ""
 
-        val foundCommand = if (updates.size == 1) {
+        val foundCommand = if (text?.startsWith(cancel.triggerName) == true) {
+            cancel
+        } else if (updates.size == 1) {
             registeredCommands
                 .firstOrNull {
                     it.customTrigger(updates.first())
@@ -50,7 +57,7 @@ class CommandDispatcher {
                 it.customTrigger(updates)
             }
         }
-        logger.debug("Executing command {}", foundCommand)
+        logger.debug("Executing command {}", foundCommand?.triggerName)
         try {
             foundCommand?.let { foundCommand.sizeOverrideExecute(updates) }
             if (foundCommand == null) {

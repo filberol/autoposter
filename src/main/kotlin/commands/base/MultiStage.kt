@@ -8,6 +8,9 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import ru.social.ai.db.entities.UserCommandStage
 import ru.social.ai.db.entities.UserCommandStageEntity
 import ru.social.ai.db.entities.UserCommandStages
+import ru.social.ai.db.entities.UserCommandStages.commandName
+import ru.social.ai.db.entities.UserCommandStages.id
+
 import ru.social.ai.util.MetaExtractor.getUserId
 
 abstract class MultiStage(
@@ -19,12 +22,12 @@ abstract class MultiStage(
         val userId = getUserId(update)
         val retrievedStage =
             UserCommandStageEntity
-                .find { (UserCommandStages.id eq userId) and (UserCommandStages.commandName eq triggerName) }
+                .find { (id eq userId) and (commandName eq triggerName) }
                 .firstOrNull()?.toCommandStage() ?: UserCommandStage(userId, triggerName, 0)
         val currentStage = stages[retrievedStage.commandStage]
         currentStage.apply {
-            sendCommandPhrase(update)
             execute(update)
+            sendCommandPhrase(update)
         }
         if (retrievedStage.commandStage + 1 == stages.size) { // Last one
             UserCommandStages.deleteWhere { (id eq userId) and (commandName eq triggerName) }

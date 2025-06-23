@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer
 import org.telegram.telegrambots.meta.api.objects.Update
 
@@ -22,8 +23,10 @@ class BasicConsumer: LongPollingSingleThreadUpdateConsumer {
 
     private fun dispatchImmediately(updates: List<Update>) {
         runBlocking {
-            withTimeout(CommandExecutionTimeoutMs) {
-                dispatcher.dispatchCommands(updates)
+            newSuspendedTransaction {
+                withTimeout(CommandExecutionTimeoutMs) {
+                    dispatcher.dispatchCommands(updates)
+                }
             }
         }
     }
