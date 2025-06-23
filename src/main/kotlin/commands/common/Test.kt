@@ -3,7 +3,7 @@ package ru.social.ai.commands.common
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import ru.social.ai.commands.base.Basic
-import ru.social.ai.util.UpdateExtractor
+import ru.social.ai.util.TextExtractor
 
 
 class Test : Basic() {
@@ -12,7 +12,7 @@ class Test : Basic() {
         telegramClient.execute(
             SendMessage(
                 update.message.chatId.toString(),
-                UpdateExtractor.extractText(update)
+                TextExtractor.extractText(update)
             )
         )
     }

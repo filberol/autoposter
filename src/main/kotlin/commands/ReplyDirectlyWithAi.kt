@@ -7,13 +7,13 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import ru.social.ai.commands.base.Basic
 import ru.social.ai.prebuilders.FreeModelPreBuilder
 import ru.social.ai.prebuilders.SendMessagePreBuilder
-import ru.social.ai.util.UpdateExtractor
+import ru.social.ai.util.TextExtractor
 
 class ReplyDirectlyWithAi: Basic() {
     override fun triggerName() = "/reply"
 
     override suspend fun execute(update: Update) {
-        val text = UpdateExtractor.extractTextWithoutCommand(update)
+        val text = TextExtractor.extractTextWithoutCommand(update)
         val response = chatClient.chatCompletions().create(
             FreeModelPreBuilder
                 .messages(listOf(UserMessage.of(text)) )

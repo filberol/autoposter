@@ -9,8 +9,9 @@ import ru.social.ai.commands.*
 import ru.social.ai.commands.common.Debug
 import ru.social.ai.commands.common.Start
 import ru.social.ai.commands.common.Test
+import ru.social.ai.commands.setup.Setup
 import ru.social.ai.exceptions.UserReasonableException
-import ru.social.ai.util.UpdateExtractor
+import ru.social.ai.util.TextExtractor
 import java.util.concurrent.ExecutionException
 
 
@@ -24,7 +25,8 @@ class CommandDispatcher {
             ReplyDirectlyWithAi(),
             RephraseRepost(),
             Start(),
-            Debug()
+            Debug(),
+            Setup()
         )
     }
 
@@ -33,8 +35,8 @@ class CommandDispatcher {
             registeredCommands
                 .firstOrNull {
                     it.customTrigger(updates.first())
-                            || UpdateExtractor.isTextPresent(updates.first())
-                            && UpdateExtractor.extractText(updates.first()).startsWith(it.triggerName())
+                            || TextExtractor.isTextPresent(updates.first())
+                            && TextExtractor.extractText(updates.first()).startsWith(it.triggerName())
 
                 }
         } else {

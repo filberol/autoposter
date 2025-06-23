@@ -8,4 +8,5 @@ val BasicRephrasePrompt = """
         - Use professional business language
         - Remove any slang or informal expressions
         - Use only Russian language
+        - Write no more than 1024 characters
     """.trimIndent()

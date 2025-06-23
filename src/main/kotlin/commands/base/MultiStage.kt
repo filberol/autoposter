@@ -1,4 +1,31 @@
 package ru.social.ai.commands.base
 
-class MultiStage: Basic() {
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.replace
+import org.telegram.telegrambots.meta.api.objects.Update
+import ru.social.ai.entities.UserCommandStage
+import ru.social.ai.entities.UserCommandStageEntity
+import ru.social.ai.entities.UserCommandStages
+import ru.social.ai.util.MetaExtractor.getUserId
+
+abstract class MultiStage : Basic() {
+    abstract val stages: List<Stage>
+
+    override suspend fun execute(update: Update) {
+        val userId = getUserId(update)
+        val retrievedStage =
+            UserCommandStageEntity
+                .find { (UserCommandStages.id eq userId) and (UserCommandStages.commandName eq triggerName()) }
+                .firstOrNull()?.toCommandStage() ?: UserCommandStage(userId, triggerName(), 0)
+        val currentStage = stages[retrievedStage.commandStage]
+        currentStage.apply {
+            sendCommandPhrase(update)
+            execute(update)
+        }
+        UserCommandStages.replace {
+            it[id] = retrievedStage.userId
+            it[commandName] = retrievedStage.commandName
+            it[commandStage] = retrievedStage.commandStage + 1
+        }
+    }
 }
