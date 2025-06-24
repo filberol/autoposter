@@ -1,6 +1,6 @@
 package ru.social.ai.commands.setup
 
-import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.replace
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 import ru.social.ai.commands.base.Stage
@@ -14,20 +14,20 @@ class SetupII: Stage() {
 
     override suspend fun execute(update: Update) {
         val text = extractText(update)
-//        try {
-            val channel = getChatFromLink(text)!!
-            println(channel)
-            ChannelConfigurations.insert {
+        try {
+            val channel = getChatFromLink(text)
+            val newConf = ChannelConfigurations.replace {
                 it[linkId] = channel.id
-                it[name] = channel.firstName
+                it[name] = channel.title
                 it[owner] = update.message.from.id
             }
-//        } catch (e: TelegramApiException) {
-//            if (e.message?.contains("chat not found", true) == true) {
-//                throw UserReasonableException("Канал не найден. Бот должен быть назначен администратором канала.")
-//            } else {
-//                throw e
-//            }
-//        }
+            context.set("config_id", newConf[ChannelConfigurations.id])
+        } catch (e: TelegramApiException) {
+            if (e.message?.contains("chat not found", true) == true) {
+                throw UserReasonableException("Канал не найден. Бот должен быть назначен администратором канала.")
+            } else {
+                throw e
+            }
+        }
     }
 }

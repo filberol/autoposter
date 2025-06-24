@@ -6,6 +6,7 @@ import ru.social.ai.prebuilders.SendMessagePreBuilder
 abstract class Stage : Basic() {
     override val triggerName = "command_not_found"
     abstract val successPhrase: String
+    lateinit var context: CommandContext
 
     fun sendCommandPhrase(update: Update) {
         telegramClient.execute(

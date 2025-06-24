@@ -20,16 +20,21 @@ abstract class MultiStage(
 
     override suspend fun execute(update: Update) {
         val userId = getUserId(update)
+        val context = CommandContextProvider.getOrCreate(userId)
+
         val retrievedStage =
             UserCommandStageEntity
                 .find { (id eq userId) and (commandName eq triggerName) }
                 .firstOrNull()?.toCommandStage() ?: UserCommandStage(userId, triggerName, 0)
-        val currentStage = stages[retrievedStage.commandStage]
+        val currentStage = stages[retrievedStage.commandStage].also {
+            it.context = context
+        }
         currentStage.apply {
             execute(update)
             sendCommandPhrase(update)
         }
         if (retrievedStage.commandStage + 1 == stages.size) { // Last one
+            CommandContextProvider.clear(userId)
             UserCommandStages.deleteWhere { (id eq userId) and (commandName eq triggerName) }
         } else {
             UserCommandStages.replace {
