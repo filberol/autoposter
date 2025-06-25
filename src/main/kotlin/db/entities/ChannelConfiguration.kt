@@ -1,42 +1,32 @@
 package ru.social.ai.db.entities
 
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.IntEntityClass
-import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.IdTable
+import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.Table
 import ru.social.ai.db.Schema
 
 @Schema
-object ChannelConfigurations : IdTable<Int>() {
-    override val id = integer("id").autoIncrement().entityId()
+object ChannelConfigurations : Table() {
     val linkId = long("channel_link_id")
     val name = varchar("channel_name", 128)
     val owner = long("owner_id")
     val rephrasePrompt = text("rephrase_prompt").nullable()
     val informationSources = text("information_sources").nullable()
 
-    override val primaryKey = PrimaryKey(id)
+    override val primaryKey = PrimaryKey(owner, linkId)
 }
 
-class ChannelConfigurationEntity(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<ChannelConfigurationEntity>(ChannelConfigurations)
-
-    private var name by ChannelConfigurations.name
-    private var linkId by ChannelConfigurations.linkId
-    private var owner by ChannelConfigurations.owner
-    private var rephrasePrompt by ChannelConfigurations.rephrasePrompt
-    private var informationSources by ChannelConfigurations.informationSources
-
-    fun toChannelConfiguration() = ChannelConfiguration(
-        id.value, name, linkId, owner, rephrasePrompt, informationSources?.split(',')
-    )
-}
+fun ResultRow.toChannelConfiguration() = ChannelConfiguration(
+    linkId = this[ChannelConfigurations.linkId],
+    name = this[ChannelConfigurations.name],
+    owner = this[ChannelConfigurations.owner],
+    rephrasePrompt = this[ChannelConfigurations.rephrasePrompt],
+    informationSources = this[ChannelConfigurations.informationSources]?.split(",") ?: emptyList()
+)
 
 data class ChannelConfiguration(
-    val id: Int,
     val name: String,
     val linkId: Long,
     val owner: Long,
     val rephrasePrompt: String?,
-    val informationSources: List<String>?,
+    val informationSources: List<String>,
 )

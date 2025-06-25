@@ -1,22 +1,29 @@
 package ru.social.ai.commands.setup
 
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.update
 import org.telegram.telegrambots.meta.api.objects.Update
 import ru.social.ai.commands.base.Stage
-import ru.social.ai.db.entities.ChannelConfigurationEntity
+import ru.social.ai.db.entities.ChannelConfigurations
+import ru.social.ai.db.entities.ChannelConfigurations.linkId
+import ru.social.ai.db.entities.ChannelConfigurations.owner
 import ru.social.ai.util.TextExtractor.extractText
 
-class SetupIII: Stage() {
+object SetupIII : Stage() {
     override val successPhrase = """
-        |Теперь определимся с типажом. 
-        |Опишите вкратце, как должен вести себя редактор, какие фразы использовать, стиль (формальный/деловой), 
-        |относиться ли скептически к новостям или оптимистично. Добавьте необходимые нюансы. 
-        |От ваших инструкций будет зависеть качество контента.
-        """".trimMargin().replace("\n", "")
+        Последний этап! 
+        Пришли от трех до пяти каналов, на которых будет основываться бот. 
+        Это важно, потому что именно эта настройка задает тренды и фактическое содержание.
+        """.trimIndent().replace("\n", "")
 
     override suspend fun execute(update: Update) {
         val text = extractText(update)
-        val config = context.get<Int>("config_id")?.let { ChannelConfigurationEntity.findById(it) }!!
-        config!!.
-
+        val channelId = context.get<Long>("channel_id")
+        ChannelConfigurations.update({
+            (owner eq update.message.from.id) and
+                    (linkId eq channelId!!)
+        }) {
+            it[rephrasePrompt] = text
+        }
     }
 }

@@ -14,6 +14,7 @@ import ru.social.ai.commands.common.Test
 import ru.social.ai.commands.setup.SetupI
 import ru.social.ai.commands.setup.SetupII
 import ru.social.ai.commands.setup.SetupIII
+import ru.social.ai.commands.setup.SetupIV
 import ru.social.ai.db.entities.UserCommandStageEntity
 import ru.social.ai.exceptions.UserReasonableException
 import ru.social.ai.util.TextExtractor.extractTextIfPresent
@@ -34,7 +35,7 @@ class CommandDispatcher {
             Debug("/debug"),
             MassMailing("/mass"),
             object : MultiStage("/setup") {
-                override val stages = listOf(SetupI(), SetupII(), SetupIII())
+                override val stages = listOf(SetupI, SetupII, SetupIII, SetupIV)
             }
         )
     }

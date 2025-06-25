@@ -7,7 +7,7 @@ import ru.social.ai.clients.TelegramBot
 object TelegramUtils {
     private val client = TelegramBot.getClient()
 
-    fun getChatFromLink(channelLink: String): ChatFullInfo {
+    fun getChannelFromLink(channelLink: String): ChatFullInfo {
         val username = "@" + channelLink
             .removePrefix("https://t.me/")
             .removePrefix("t.me/")
@@ -16,7 +16,7 @@ object TelegramUtils {
         return client.execute(GetChat(username))
     }
 
-    fun getChatFromLink(channelLink: Long): ChatFullInfo {
+    fun getChannelFromLink(channelLink: Long): ChatFullInfo {
         return client.execute(GetChat(channelLink.toString()))
     }
 }

@@ -2,6 +2,10 @@ package ru.social.ai.commands.setup
 
 import ru.social.ai.commands.base.Stage
 
-class SetupI: Stage() {
-    override val successPhrase = "Приступим к настройке! Пришлите ссылку на канал в любом удобном формате."
+object SetupI: Stage() {
+    override val successPhrase = """
+        Приступим к настройке! 
+        Пришлите в любом удобном формате ссылку на канал. 
+        Не забудьте, что бот должен быть администратором в канале. 
+        """.trimIndent().replace("\n", "")
 }
