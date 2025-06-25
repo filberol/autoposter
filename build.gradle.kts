@@ -3,9 +3,11 @@ plugins {
 }
 
 group = "ru.social.ai"
+val architecture = "macos_amd64"
 
 repositories {
     mavenCentral()
+    maven { url = uri("https://mvn.mchv.eu/repository/mchv/") }
 }
 
 dependencies {
@@ -23,6 +25,20 @@ dependencies {
     // Telegram Api
     implementation("org.telegram:telegrambots-longpolling:9.0.0")
     implementation("org.telegram:telegrambots-client:9.0.0")
+
+    // Align all TDLight artifacts
+    implementation(platform("it.tdlight:tdlight-java-bom:3.4.0+td.1.8.26"))
+    implementation("it.tdlight:tdlight-java")
+    // Replace classifier with your OS: e.g. macos_x86_64, linux_amd64_gnu_ssl1, windows_x86_64
+    implementation("it.tdlight:tdlight-natives") {
+        artifact {
+            classifier = architecture
+        }
+    }
+
+    // ZXing for QR-code generation
+    implementation("com.google.zxing:core:3.5.0")
+    implementation("com.google.zxing:javase:3.5.0")
 
     // ChatBot Api
     implementation("io.github.sashirestela:simple-openai:3.21.0") {
