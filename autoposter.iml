@@ -4,6 +4,7 @@
     <content url="file://$MODULE_DIR$" dumb="true">
       <excludeFolder url="file://$MODULE_DIR$/.idea/dataSources" />
       <excludeFolder url="file://$MODULE_DIR$/.kotlin" />
+      <excludeFolder url="file://$MODULE_DIR$/tdlib-session-id8120195763" />
     </content>
   </component>
 </module>

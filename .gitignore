@@ -4,3 +4,4 @@ env
 .env
 .kotlin
 data.db
+tdlib-session-*

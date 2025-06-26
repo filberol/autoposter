@@ -3,6 +3,8 @@ package ru.social.ai.clients
 import io.github.sashirestela.openai.SimpleOpenAI
 
 object ChatBot {
+    val client: SimpleOpenAI by lazy { getRelevantClient() }
+
     private val freeToken = System.getenv("openrouter_api_token_free")
     private val deepSeekToken = System.getenv("deepseek_api_token")
     private val gigaChatToken = System.getenv("giga_chat_token") // При необходимости ру пополнения
@@ -17,5 +19,5 @@ object ChatBot {
         .baseUrl("https://api.deepseek.com")
         .build()
 
-    fun getRelevantClient(): SimpleOpenAI = freeClient
+    private fun getRelevantClient(): SimpleOpenAI = freeClient
 }

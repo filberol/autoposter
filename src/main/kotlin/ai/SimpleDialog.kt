@@ -10,7 +10,7 @@ import ru.social.ai.prebuilders.FreeModelPreBuilder
 import ru.social.ai.util.MessageFormatter
 
 object SimpleDialog {
-    private val chatClient = ChatBot.getRelevantClient()
+    private val chatClient = ChatBot.client
 
     suspend fun getRephrase(question: String): String {
         val response = chatClient.chatCompletions().create(

@@ -6,7 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.media.InputMedia
 import ru.social.ai.clients.TelegramBot
 
 object MediaUtils {
-    private val telegramClient = TelegramBot.getClient()
+    private val telegramClient = TelegramBot.client
 
     fun sendMediaWithCaption(media: InputMedia, file: InputFile, chatId: String) {
         when (media.type) {

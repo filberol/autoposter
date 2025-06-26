@@ -8,6 +8,10 @@ interface Command {
      */
     suspend fun execute(update: Update) = Unit
     suspend fun execute(updates: List<Update>) = Unit
+
+    /**
+     * Adapter for multi-message commands e.g. multiple attachments
+     */
     suspend fun sizeOverrideExecute(updates: List<Update>) =
         if (updates.size == 1) execute(updates.first()) else execute(updates)
 
@@ -16,4 +20,9 @@ interface Command {
      */
     fun customTrigger(update: Update): Boolean = false
     fun customTrigger(updates: List<Update>): Boolean = false
+
+    /**
+     * Filter command execution permissions
+     */
+    fun filterChain(update: Update): Boolean = true
 }
