@@ -1,4 +1,4 @@
-package ru.social.ai.commands
+package ru.social.ai.commands.common
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update

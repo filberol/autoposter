@@ -44,7 +44,10 @@ dependencies {
     implementation("io.github.sashirestela:simple-openai:3.21.0") {
         exclude(group = "org.slf4j", module = "slf4j-simple")
     }
+
+    // OkHttpClient
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
     // SLF4J API and Logback
     implementation("org.slf4j:slf4j-api:2.0.9")

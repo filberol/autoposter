@@ -20,7 +20,8 @@ object TelegramUtils {
     }
 
     fun getSubscribedChannels(): List<Long> {
-        return mtProto.send(GetChats()).get().chatIds.toList()
+        val limit = 100
+        return mtProto.send(GetChats(null, limit)).get().chatIds.toList()
     }
 
     fun getChannelFromLink(channelLink: Long): ChatFullInfo {

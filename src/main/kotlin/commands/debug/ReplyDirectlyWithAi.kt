@@ -1,4 +1,4 @@
-package ru.social.ai.commands
+package ru.social.ai.commands.debug
 
 import io.github.sashirestela.openai.domain.chat.ChatMessage.UserMessage
 import kotlinx.coroutines.Dispatchers

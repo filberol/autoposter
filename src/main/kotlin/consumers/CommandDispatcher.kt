@@ -8,6 +8,9 @@ import ru.social.ai.clients.TelegramBot
 import ru.social.ai.commands.*
 import ru.social.ai.commands.base.MultiStage
 import ru.social.ai.commands.common.*
+import ru.social.ai.commands.debug.DebugUpdate
+import ru.social.ai.commands.debug.ListClientSubscriptions
+import ru.social.ai.commands.debug.ReplyDirectlyWithAi
 import ru.social.ai.commands.setup.*
 import ru.social.ai.db.entities.UserCommandStageEntity
 import ru.social.ai.exceptions.UserReasonableException
@@ -26,8 +29,10 @@ class CommandDispatcher {
             ReplyDirectlyWithAi("/reply"),
             RephraseRepost("/rephrase"),
             Start("/start"),
-            Debug("/debug"),
+            DebugUpdate("/debug"),
             MassMailing("/mass"),
+            ProcessConfigurationSources("/processSources"),
+            ListClientSubscriptions("/listSubscriptions"),
             object : MultiStage("/setup") {
                 override val stages = listOf(SetupI, SetupII, SetupIII, SetupIV)
             }
