@@ -8,7 +8,7 @@ import ru.social.ai.commands.base.Stage
 import ru.social.ai.db.entities.ChannelConfigurations
 import ru.social.ai.db.entities.ChannelConfigurations.linkId
 import ru.social.ai.db.entities.ChannelConfigurations.owner
-import ru.social.ai.util.TextExtractor.extractText
+import ru.social.ai.util.extractText
 import ru.social.ai.util.getAdministratedChannelFromLink
 
 object SetupIV : Stage() {
@@ -16,7 +16,7 @@ object SetupIV : Stage() {
 
     override suspend fun execute(update: Update) {
         try {
-            val channelInfos = extractText(update)
+            val channelInfos = update.extractText()
                 .split("\n")
                 .map { getAdministratedChannelFromLink(it) }
             val channelId = context.get<Long>("channel_id")

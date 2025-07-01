@@ -3,7 +3,7 @@ package ru.social.ai.commands.common
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import ru.social.ai.commands.base.AdminCommand
-import ru.social.ai.util.TextExtractor
+import ru.social.ai.util.extractText
 
 class Test(
     override val triggerName: String
@@ -12,7 +12,7 @@ class Test(
         telegramClient.execute(
             SendMessage(
                 update.message.chatId.toString(),
-                TextExtractor.extractText(update)
+                update.extractText()
             )
         )
     }

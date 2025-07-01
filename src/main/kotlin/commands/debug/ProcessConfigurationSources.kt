@@ -9,7 +9,7 @@ import ru.social.ai.db.entities.ChannelConfigurations.linkId
 import ru.social.ai.db.entities.ChannelConfigurations.owner
 import ru.social.ai.db.entities.toChannelConfiguration
 import ru.social.ai.prebuilders.SendMessagePreBuilder
-import ru.social.ai.util.TextExtractor.extractTextWithoutCommand
+import ru.social.ai.util.extractTextWithoutCommand
 import ru.social.ai.util.getAdministratedChannelFromLink
 import ru.social.ai.util.getLastMessageFromChannelLink
 
@@ -18,7 +18,7 @@ class ProcessConfigurationSources(
 ) : Basic() {
     override suspend fun execute(update: Update) {
         val channelInfo = getAdministratedChannelFromLink(
-            extractTextWithoutCommand(update).trim()
+            update.extractTextWithoutCommand().trim()
         )
         val config = ChannelConfigurations.select {
             (owner eq update.message.from.id) and

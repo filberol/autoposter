@@ -7,7 +7,7 @@ import ru.social.ai.commands.base.Stage
 import ru.social.ai.db.entities.ChannelConfigurations
 import ru.social.ai.db.entities.ChannelConfigurations.linkId
 import ru.social.ai.db.entities.ChannelConfigurations.owner
-import ru.social.ai.util.TextExtractor.extractText
+import ru.social.ai.util.extractText
 
 object SetupIII : Stage() {
     override val successPhrase = """
@@ -17,7 +17,7 @@ object SetupIII : Stage() {
         """.trimIndent().replace("\n", "")
 
     override suspend fun execute(update: Update) {
-        val text = extractText(update)
+        val text = update.extractText()
         val channelId = context.get<Long>("channel_id")
         ChannelConfigurations.update({
             (owner eq update.message.from.id) and

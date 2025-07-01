@@ -15,7 +15,7 @@ import ru.social.ai.commands.debug.ReplyDirectlyWithAi
 import ru.social.ai.commands.setup.*
 import ru.social.ai.db.entities.UserCommandStageEntity
 import ru.social.ai.exceptions.UserReasonableException
-import ru.social.ai.util.TextExtractor.extractTextIfPresent
+import ru.social.ai.util.extractTextIfPresent
 import java.util.concurrent.ExecutionException
 
 class CommandDispatcher {
@@ -43,7 +43,7 @@ class CommandDispatcher {
     suspend fun dispatchCommands(updates: List<Update>) {
         if (updates.first().message == null) return
         val commandInProcess = UserCommandStageEntity.findById(updates.first().message.from.id)
-        val text = extractTextIfPresent(updates.first())
+        val text = updates.first().extractTextIfPresent()
         val command = commandInProcess?.toCommandStage()?.commandName ?: text ?: ""
 
         val foundCommand = if (text?.startsWith(cancel.triggerName) == true) {
