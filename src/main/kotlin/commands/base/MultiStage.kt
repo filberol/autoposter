@@ -10,8 +10,7 @@ import ru.social.ai.db.entities.UserCommandStageEntity
 import ru.social.ai.db.entities.UserCommandStages
 import ru.social.ai.db.entities.UserCommandStages.commandName
 import ru.social.ai.db.entities.UserCommandStages.id
-
-import ru.social.ai.util.MetaExtractor.getUserId
+import ru.social.ai.util.getUserId
 
 abstract class MultiStage(
     override val triggerName: String
@@ -19,7 +18,7 @@ abstract class MultiStage(
     abstract val stages: List<Stage>
 
     override suspend fun execute(update: Update) {
-        val userId = getUserId(update)
+        val userId = update.getUserId()
         val context = CommandContextProvider.getOrCreate(userId)
 
         val retrievedStage =

@@ -8,8 +8,8 @@ import ru.social.ai.commands.base.Stage
 import ru.social.ai.db.entities.ChannelConfigurations
 import ru.social.ai.db.entities.ChannelConfigurations.linkId
 import ru.social.ai.db.entities.ChannelConfigurations.owner
-import ru.social.ai.util.TelegramUtils.getChannelFromLink
 import ru.social.ai.util.TextExtractor.extractText
+import ru.social.ai.util.getAdministratedChannelFromLink
 
 object SetupIV : Stage() {
     override val successPhrase = "Конфигурация канала успешно создана!"
@@ -18,7 +18,7 @@ object SetupIV : Stage() {
         try {
             val channelInfos = extractText(update)
                 .split("\n")
-                .map { getChannelFromLink(it) }
+                .map { getAdministratedChannelFromLink(it) }
             val channelId = context.get<Long>("channel_id")
             ChannelConfigurations.update({
                 (owner eq update.message.from.id) and

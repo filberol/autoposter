@@ -20,7 +20,8 @@ fun ResultRow.toChannelConfiguration() = ChannelConfiguration(
     name = this[ChannelConfigurations.name],
     owner = this[ChannelConfigurations.owner],
     rephrasePrompt = this[ChannelConfigurations.rephrasePrompt],
-    informationSources = this[ChannelConfigurations.informationSources]?.split(",") ?: emptyList()
+    informationSources = this[ChannelConfigurations.informationSources]
+        ?.split(",")?.map { it.toLong() } ?: emptyList()
 )
 
 data class ChannelConfiguration(
@@ -28,5 +29,5 @@ data class ChannelConfiguration(
     val linkId: Long,
     val owner: Long,
     val rephrasePrompt: String?,
-    val informationSources: List<String>,
+    val informationSources: List<Long>,
 )

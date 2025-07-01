@@ -10,6 +10,7 @@ import ru.social.ai.commands.base.MultiStage
 import ru.social.ai.commands.common.*
 import ru.social.ai.commands.debug.DebugUpdate
 import ru.social.ai.commands.debug.ListClientSubscriptions
+import ru.social.ai.commands.debug.ProcessConfigurationSources
 import ru.social.ai.commands.debug.ReplyDirectlyWithAi
 import ru.social.ai.commands.setup.*
 import ru.social.ai.db.entities.UserCommandStageEntity

@@ -7,7 +7,7 @@ import kotlinx.coroutines.withContext
 import ru.social.ai.ai.prompts.BasicRephrasePrompt
 import ru.social.ai.clients.ChatBot
 import ru.social.ai.prebuilders.FreeModelPreBuilder
-import ru.social.ai.util.MessageFormatter
+import ru.social.ai.util.formatForTelegramMarkup
 
 object SimpleDialog {
     private val chatClient = ChatBot.client
@@ -21,8 +21,8 @@ object SimpleDialog {
                 ) )
                 .build()
         )
-        return MessageFormatter.formatForTelegramMarkup(withContext(Dispatchers.IO) {
-            response.get().choices.first().message.content
-        })
+        return withContext(Dispatchers.IO) {
+            response.get().choices.first().message.content.formatForTelegramMarkup()
+        }
     }
 }

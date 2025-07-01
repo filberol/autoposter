@@ -6,8 +6,8 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 import ru.social.ai.commands.base.Stage
 import ru.social.ai.db.entities.ChannelConfigurations
 import ru.social.ai.exceptions.UserReasonableException
-import ru.social.ai.util.TelegramUtils.getChannelFromLink
 import ru.social.ai.util.TextExtractor.extractText
+import ru.social.ai.util.getAdministratedChannelFromLink
 
 object SetupII : Stage() {
     override val successPhrase = """
@@ -20,7 +20,7 @@ object SetupII : Stage() {
     override suspend fun execute(update: Update) {
         val text = extractText(update)
         try {
-            val channel = getChannelFromLink(text)
+            val channel = getAdministratedChannelFromLink(text)
             ChannelConfigurations.replace {
                 it[linkId] = channel.id
                 it[name] = channel.title

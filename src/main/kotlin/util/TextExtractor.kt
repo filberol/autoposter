@@ -1,5 +1,6 @@
 package ru.social.ai.util
 
+import it.tdlight.jni.TdApi.MessageContent
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.media.InputMedia.InputMediaBuilder
@@ -63,4 +64,9 @@ object TextExtractor {
             else -> null
         }
     }
+}
+
+
+fun MessageContent.extractText(update: Update): String? {
+    return ""
 }

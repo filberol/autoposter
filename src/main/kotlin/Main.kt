@@ -5,14 +5,13 @@ import org.telegram.telegrambots.longpolling.exceptions.TelegramApiErrorResponse
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 import ru.social.ai.consumers.BasicConsumer
 import ru.social.ai.db.DatabaseFactory
-import ru.social.ai.util.TokenProvider
 import java.lang.NullPointerException
 import kotlin.system.exitProcess
 
 fun main() {
     try {
         DatabaseFactory.init()
-        val botToken = TokenProvider.getTelegramToken()
+        val botToken = System.getenv("telegram_api_token")
         val botsApplication = TelegramBotsLongPollingApplication()
         botsApplication.registerBot(botToken, BasicConsumer())
     } catch (e: TelegramApiException) {
