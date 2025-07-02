@@ -8,10 +8,7 @@ import ru.social.ai.clients.TelegramBot
 import ru.social.ai.commands.*
 import ru.social.ai.commands.base.MultiStage
 import ru.social.ai.commands.common.*
-import ru.social.ai.commands.debug.DebugUpdate
-import ru.social.ai.commands.debug.ListClientSubscriptions
-import ru.social.ai.commands.debug.ProcessConfigurationSources
-import ru.social.ai.commands.debug.ReplyDirectlyWithAi
+import ru.social.ai.commands.debug.*
 import ru.social.ai.commands.setup.*
 import ru.social.ai.db.entities.UserCommandStageEntity
 import ru.social.ai.exceptions.UserReasonableException
@@ -34,6 +31,7 @@ class CommandDispatcher {
             MassMailing("/mass"),
             ProcessConfigurationSources("/processSources"),
             ListClientSubscriptions("/listSubscriptions"),
+            GetPublicChannelHistory("/channelHistory"),
             object : MultiStage("/setup") {
                 override val stages = listOf(SetupI, SetupII, SetupIII, SetupIV)
             }
@@ -69,6 +67,7 @@ class CommandDispatcher {
             logger.error(e.message)
         } catch (e: ExecutionException) {
             logger.error(e.message)
+            logger.error(e.stackTraceToString())
             responseClient.execute(
                 SendMessage(
                     updates.first().message.chatId.toString(), "Непредвиденная ошибка"

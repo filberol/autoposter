@@ -32,13 +32,39 @@ object MtProtoBot {
         return client
     }
 
-    class CustomLogger: NativeClient.LogMessageHandler {
+    class CustomLogger : NativeClient.LogMessageHandler {
         private val originalLogger = Slf4JLogMessageHandler()
 
-        override fun onLogMessage(p0: Int, p1: String) {
-            if (p1.contains("Begin to wait for updates")) return
-            if (p1.contains("End to wait for updates")) return
-            originalLogger.onLogMessage(p0, p1.trim())
+        private val filteredKeywords = listOf(
+            "Begin to wait for updates",
+            "End to wait for updates",
+            "MessageDbActor",
+            "ConnectionCreator",
+            "&net_query",
+            "ConfigManager",
+            "NotificationManager",
+            "DownloadManager",
+            "UpdatesManager",
+            "MessagesManager",
+            "Session.cpp",
+            "AttachMenuManager",
+            "DialogDbActor",
+            "FileManager.cpp",
+            "StickersManager.cpp",
+            "ContactsManager.cpp",
+            "FileReferenceManager.cpp",
+            "BackgroundManager.cpp",
+            "DocumentsManager.cpp"
+        )
+
+        override fun onLogMessage(verbosityLevel: Int, message: String) {
+            val trimmedMessage = message.trim()
+
+            if (filteredKeywords.any { trimmedMessage.contains(it) }) {
+                originalLogger.onLogMessage(5, trimmedMessage) // Send to trace level
+            } else {
+                originalLogger.onLogMessage(verbosityLevel, trimmedMessage)
+            }
         }
     }
 }

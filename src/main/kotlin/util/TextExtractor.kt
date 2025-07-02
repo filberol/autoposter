@@ -1,5 +1,6 @@
 package ru.social.ai.util
 
+import it.tdlight.jni.TdApi
 import it.tdlight.jni.TdApi.MessageContent
 import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -17,10 +18,23 @@ fun Update.extractText(): String {
         message.hasText() -> message.text
         message.hasPhoto() && message.caption != null -> message.caption
         message.hasVideo() && message.caption != null -> message.caption
+        message.hasAudio() && message.caption != null -> message.caption
+        message.hasDocument() && message.caption != null -> message.caption
         else -> throw TextNotProvided()
     }
     return inputText
 }
+
+fun MessageContent.extractText(): String =
+    when (this.javaClass.simpleName) {
+        "MessageText" -> (this as TdApi.MessageText).text.text
+        "MessageAnimation" -> (this as TdApi.MessageAnimation).caption.text
+        "MessageAudio" -> (this as TdApi.MessageAudio).caption.text
+        "MessageDocument" -> (this as TdApi.MessageDocument).caption.text
+        "MessagePhoto" -> (this as TdApi.MessagePhoto).caption.text
+        "MessageVideo" -> (this as TdApi.MessageVideo).caption.text
+        else -> throw TextNotProvided()
+    }
 
 fun Update.extractTextWithoutCommand(): String {
     val text = this.extractText()
@@ -62,8 +76,4 @@ fun Update.extractAttachmentMediaBuilder(): InputMediaBuilder<*,*>? {
         message.hasAudio() -> InputMediaAudio.builder().media(message.audio.fileId)
         else -> null
     }
-}
-
-fun MessageContent.extractText(update: Update): String? {
-    return ""
 }

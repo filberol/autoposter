@@ -14,7 +14,9 @@ class ListClientSubscriptions(
             .map { getPublicChannelFromLink(it) }
         val response =
             "Список подписок клиента:\n" +
-                    channels.joinToString(separator = "\n") { "${it.title} - ${it.unreadCount} непрочитанных" }
+                    channels.joinToString(separator = "\n") {
+                        "${it.title} - ${it.unreadCount} непрочитанных"
+                    }
         telegramClient.execute(
             SendMessagePreBuilder
                 .chatId(update.message.chatId.toString())
