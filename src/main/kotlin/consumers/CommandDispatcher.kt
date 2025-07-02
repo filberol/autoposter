@@ -29,9 +29,10 @@ class CommandDispatcher {
             Start("/start"),
             DebugUpdate("/debug"),
             MassMailing("/mass"),
-            ProcessConfigurationSources("/processSources"),
+            ProcessSources("/processSources"),
             ListClientSubscriptions("/listSubscriptions"),
             GetPublicChannelHistory("/channelHistory"),
+            CreatePost("/createPost"),
             object : MultiStage("/setup") {
                 override val stages = listOf(SetupI, SetupII, SetupIII, SetupIV)
             }

@@ -26,13 +26,13 @@ fun Update.extractText(): String {
 }
 
 fun MessageContent.extractText(): String =
-    when (this.javaClass.simpleName) {
-        "MessageText" -> (this as TdApi.MessageText).text.text
-        "MessageAnimation" -> (this as TdApi.MessageAnimation).caption.text
-        "MessageAudio" -> (this as TdApi.MessageAudio).caption.text
-        "MessageDocument" -> (this as TdApi.MessageDocument).caption.text
-        "MessagePhoto" -> (this as TdApi.MessagePhoto).caption.text
-        "MessageVideo" -> (this as TdApi.MessageVideo).caption.text
+    when (this.javaClass) {
+        TdApi.MessageText::class.java -> (this as TdApi.MessageText).text.text
+        TdApi.MessageAnimation::class.java -> (this as TdApi.MessageAnimation).caption.text
+        TdApi.MessageAudio::class.java -> (this as TdApi.MessageAudio).caption.text
+        TdApi.MessageDocument::class.java -> (this as TdApi.MessageDocument).caption.text
+        TdApi.MessagePhoto::class.java -> (this as TdApi.MessagePhoto).caption.text
+        TdApi.MessageVideo::class.java -> (this as TdApi.MessageVideo).caption.text
         else -> throw TextNotProvided()
     }
 

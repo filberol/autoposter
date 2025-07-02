@@ -34,9 +34,11 @@ fun getLastMessageFromChannelLink(channelLink: Long): Message =
     getPublicChannelFromLink(channelLink).lastMessage
 
 fun getMessageHistoryPublicChannel(channelLink: String, limit: Int): List<Message> {
-    val chat = mtProto.send(TdApi.SearchPublicChat(channelLink.removePrefixFromLink())).get()
+    val chat = mtProto.send(
+        TdApi.SearchPublicChat(channelLink.removePrefixFromLink())
+    ).get()
     val history = getHistory(chat.id, limit)
-    return if (history.size == 1) {
+    return if (history.size == 1 && limit > 1) {
         joinPublicChannel(chat.id)
         getHistory(chat.id, limit)
     } else {

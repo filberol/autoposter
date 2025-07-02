@@ -9,7 +9,6 @@ object TelegramBot {
     val client: OkHttpTelegramClient by lazy { getHttpClient() }
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-
     private val token = System.getenv("telegram_api_token")
     private var customLogger: HttpLoggingInterceptor.Logger =
         HttpLoggingInterceptor.Logger { message: String ->
