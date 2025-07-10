@@ -4,7 +4,7 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.update
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
-import ru.social.ai.commands.base.Stage
+import ru.social.ai.commands.base.multistage.Stage
 import ru.social.ai.db.entities.ChannelConfigurations
 import ru.social.ai.db.entities.ChannelConfigurations.linkId
 import ru.social.ai.db.entities.ChannelConfigurations.owner

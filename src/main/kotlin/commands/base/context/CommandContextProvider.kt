@@ -1,4 +1,4 @@
-package ru.social.ai.commands.base
+package ru.social.ai.commands.base.context
 
 object CommandContextProvider {
     private val userContexts = mutableMapOf<Long, CommandContext>()

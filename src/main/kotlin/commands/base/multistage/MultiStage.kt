@@ -1,10 +1,12 @@
-package ru.social.ai.commands.base
+package ru.social.ai.commands.base.multistage
 
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.replace
 import org.telegram.telegrambots.meta.api.objects.Update
+import ru.social.ai.commands.base.Basic
+import ru.social.ai.commands.base.context.CommandContextProvider
 import ru.social.ai.db.entities.UserCommandStage
 import ru.social.ai.db.entities.UserCommandStageEntity
 import ru.social.ai.db.entities.UserCommandStages

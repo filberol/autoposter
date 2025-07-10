@@ -1,6 +1,6 @@
 package ru.social.ai.commands.setup
 
-import ru.social.ai.commands.base.Stage
+import ru.social.ai.commands.base.multistage.Stage
 
 object SetupI: Stage() {
     override val successPhrase = """

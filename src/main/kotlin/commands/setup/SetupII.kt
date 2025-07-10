@@ -3,7 +3,7 @@ package ru.social.ai.commands.setup
 import org.jetbrains.exposed.sql.replace
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
-import ru.social.ai.commands.base.Stage
+import ru.social.ai.commands.base.multistage.Stage
 import ru.social.ai.db.entities.ChannelConfigurations
 import ru.social.ai.exceptions.UserReasonableException
 import ru.social.ai.util.extractText

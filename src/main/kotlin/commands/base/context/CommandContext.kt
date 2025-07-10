@@ -1,4 +1,4 @@
-package ru.social.ai.commands.base
+package ru.social.ai.commands.base.context
 
 class CommandContext {
     private val data = mutableMapOf<String, Any?>()
