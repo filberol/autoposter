@@ -6,7 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.social.ai.ai.prompts.BasicRephrasePrompt
 import ru.social.ai.ai.prompts.CompileSourcesPrompt
-import ru.social.ai.ai.prompts.parseLine
+import ru.social.ai.ai.prompts.splitCompilationChoice
 import ru.social.ai.clients.ChatBot
 import ru.social.ai.prebuilders.FreeModelPreBuilder
 import ru.social.ai.util.formatForTelegramMarkup
@@ -40,6 +40,6 @@ object SimpleDialog {
         val text = withContext(Dispatchers.IO) {
             response.get().choices.first().message.content.formatForTelegramMarkup()
         }
-        return parseLine(text)
+        return splitCompilationChoice(text)
     }
 }

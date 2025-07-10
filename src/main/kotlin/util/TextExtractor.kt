@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.media.InputMediaAudio
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaDocument
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaVideo
+import org.telegram.telegrambots.meta.api.objects.message.Message
 import ru.social.ai.exceptions.TextNotProvided
 
 fun Update.extractText(): String {
@@ -54,26 +55,30 @@ fun Update.isTextPresent(): Boolean {
     }
 }
 
-fun Update.extractAttachmentInputFile(): InputFile? {
-    val message = this.message
+fun Message.extractAttachmentInputFile(): InputFile? {
     return when {
-        message.hasPhoto() -> InputFile(message.photo.last().fileId)
-        message.hasVideo() -> InputFile(message.video.fileId)
-        message.hasDocument() -> InputFile(message.document.fileId)
-        message.hasAnimation() -> InputFile(message.animation.fileId)
-        message.hasAudio() -> InputFile(message.audio.fileId)
+        this.hasPhoto() -> InputFile(this.photo.last().fileId)
+        this.hasVideo() -> InputFile(this.video.fileId)
+        this.hasDocument() -> InputFile(this.document.fileId)
+        this.hasAnimation() -> InputFile(this.animation.fileId)
+        this.hasAudio() -> InputFile(this.audio.fileId)
         else -> null
     }
 }
 
-fun Update.extractAttachmentMediaBuilder(): InputMediaBuilder<*,*>? {
-    val message = this.message
+fun Update.extractAttachmentInputFile(): InputFile? =
+    this.message?.extractAttachmentInputFile()
+
+fun Message.extractAttachmentMediaBuilder(): InputMediaBuilder<*,*>? {
     return when {
-        message.hasPhoto() -> InputMediaPhoto.builder().media(message.photo.last().fileId)
-        message.hasVideo() -> InputMediaVideo.builder().media(message.video.fileId)
-        message.hasDocument() -> InputMediaDocument.builder().media(message.document.fileId)
-        message.hasAnimation() -> InputMediaAnimation.builder().media(message.animation.fileId)
-        message.hasAudio() -> InputMediaAudio.builder().media(message.audio.fileId)
+        this.hasPhoto() -> InputMediaPhoto.builder().media(this.photo.last().fileId)
+        this.hasVideo() -> InputMediaVideo.builder().media(this.video.fileId)
+        this.hasDocument() -> InputMediaDocument.builder().media(this.document.fileId)
+        this.hasAnimation() -> InputMediaAnimation.builder().media(this.animation.fileId)
+        this.hasAudio() -> InputMediaAudio.builder().media(this.audio.fileId)
         else -> null
     }
 }
+
+fun Update.extractAttachmentMediaBuilder(): InputMediaBuilder<*,*>? =
+    this.message?.extractAttachmentMediaBuilder()
